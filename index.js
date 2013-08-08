@@ -1,4 +1,12 @@
+/*Subject to Mozilla  Public licence 2.0*/
 
+// Repo for original source code and specific commit can be found here :https://github.com/hgourvest/node-xml-lite/commit/bf1c7bdced996a68b0adfa1599f8707f4c37fbf0
+
+/*Differences between this  code and the original source code   are minimal and   our  isolated to two of the cases in XMLParser.prototype.parseBuffer 
+ in cases : case xsClodeElementCDATA and case xsElementCDATA , 
+ the only changes made are   in the initial  position of xsElementCDATA  the  appropriate character tags for  cdata are appended  to the  value
+ all  of the  following characters are  then appended to the value instead of the pertinent cdata characters being skipped and    in the xsClodeElementCDATA  the appropriate ending characters for 
+ CDATA are  appended to the value instead of  being ignored*/
 var
     fs = require("fs"),
     iconv; // loaded if necessary
@@ -556,6 +564,10 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                 switch (this.position) {
                     case 0:
                         if (c == CHAR_C) {
+                            this.value.append(CHAR_LESS);
+                            this.value.append(CHAR_EXCL);
+                            this.value.append(CHAR_LEBR);
+                            this.value.append(c);
                             this.position++;
                             break;
                         } else {
@@ -563,6 +575,7 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                         }
                     case 1:
                         if (c == CHAR_D) {
+                            this.value.append(c);
                             this.position++;
                             break;
                         } else {
@@ -570,6 +583,7 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                         }
                     case 2:
                         if (c == CHAR_A) {
+                            this.value.append(c);
                             this.position++;
                             break;
                         } else {
@@ -577,6 +591,7 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                         }
                     case 3:
                         if (c == CHAR_T) {
+                            this.value.append(c);
                             this.position++;
                             break;
                         } else {
@@ -584,6 +599,7 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                         }
                     case 4:
                         if (c == CHAR_A) {
+                            this.value.append(c);
                             this.position++;
                             break;
                         } else {
@@ -591,6 +607,7 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                         }
                     case 5:
                         if (c == CHAR_LEBR) {
+                            this.value.append(c);
                             this.position++;
                             break;
                         } else {
@@ -598,6 +615,7 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                         }
                     default:
                         if (c == CHAR_RIBR) {
+                            this.value.append(c);
                             this.position = 0;
                             this.stack.state = xsClodeElementCDATA;
                         } else {
@@ -609,6 +627,8 @@ XMLParser.prototype.parseBuffer = function(buffer, len, event) {
                 switch (this.position) {
                     case 0:
                         if (c == CHAR_RIBR) {
+                            this.value.append(c);
+                            this.value.append(CHAR_GREA);
                             this.position++;
                         } else {
                             this.value.append(CHAR_RIBR);
